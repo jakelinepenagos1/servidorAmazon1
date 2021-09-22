@@ -1,5 +1,6 @@
 const express = require('express');
 const {conectarBD}=require("../database/conexion.js")
+const facturaModelo=require("../models/facturaModelo.js")
 
 class SevidorModelo{
 
@@ -8,6 +9,7 @@ class SevidorModelo{
 
         this.app = express();
         this.levantarBD();
+        this.auxiliares();
         this.llamarRutas();
 
 
@@ -22,7 +24,13 @@ class SevidorModelo{
     }
 
     levantarBD(){
+
         conectarBD();
+    }
+
+    auxiliares(){
+
+        this.app.use(express.json())
     }
 
     llamarRutas(){
@@ -31,8 +39,28 @@ class SevidorModelo{
             res.send('Buenas tardes Juan Jose');
         });
 
-        this.app.post('/facturas/nuevo', function (req, res) {
-            res.send('Buenas tardes Juan Jose');
+        this.app.post('/facturas/nuevo',async function (req, res) {
+            let datosFactura=req.body;
+
+            try{
+
+                let factura=new facturaModelo(datosFactura);
+                await factura.save();
+                res.status(200).json({
+                    respuestas:"exito",
+                    datos:factura
+                })
+
+            }
+            catch(error){
+
+                res.status(400).json({
+                    respuestas:"error",
+                    datos:error
+
+                })
+
+            }
         });
 
         this.app.put('/facturas/cambiar', function (req, res) {
