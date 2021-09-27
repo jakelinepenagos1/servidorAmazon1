@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const {conectarBD}=require("../database/conexion.js")
 const facturaModelo=require("../models/facturaModelo.js")
 
@@ -31,6 +32,7 @@ class SevidorModelo{
     auxiliares(){
 
         this.app.use(express.json())
+        this.app.use(cors())
     }
 
     llamarRutas(){
